@@ -15,6 +15,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+
     @GetMapping("/addNewUser")
     public @ResponseBody String addNewUser(@RequestParam String userUniqueName,
                                            @RequestParam String userFirstName,
@@ -38,6 +39,18 @@ public class UserController {
 
 
 }
+
+    @PostMapping("/addUser")
+    public @ResponseBody String addUser(@RequestBody User user){
+        try{
+
+            userRepository.save(user);
+            return "Saved";
+
+        }catch (Exception e){
+            return ("Failed, because of "+e);
+        }
+    }
 
     @PostMapping(path="/all")
     public @ResponseBody Iterable<User> getAllUsers() {
@@ -66,4 +79,21 @@ public class UserController {
 
     }
 
+    @PutMapping("/updateUser/{id}")
+    public @ResponseBody String updateUser(@PathVariable Integer userId, @RequestBody User updatedUser){
+        User userInstance = userRepository.findById(userId).get();
+        userInstance.setUserFirstName(updatedUser.getUserFirstName());
+        userInstance.setUserLastName(updatedUser.getUserLastName());
+        userInstance.setUserUniqueName(updatedUser.getUserUniqueName());
+
+        try{
+
+            userRepository.save(userInstance);
+            return "Updated";
+
+        }catch (Exception e){
+            return ("Failed, because of "+e);
+        }
+
+    }
 }

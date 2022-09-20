@@ -9,11 +9,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer userId;
 
+    @Column(nullable = false)
     private String userFirstName;
 
+
+    @Column(nullable = false)
     private String userLastName;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String userUniqueName;
 
     public Integer getUserId() {
