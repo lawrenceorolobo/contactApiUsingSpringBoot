@@ -5,40 +5,15 @@ package com.lawrenceorolobo.contactapi.webservice.controllers;
 import com.lawrenceorolobo.contactapi.webservice.entities.User;
 import com.lawrenceorolobo.contactapi.webservice.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping(path = "contactapi")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
 
-
-    @GetMapping("/addNewUser")
-    public @ResponseBody String addNewUser(@RequestParam String userUniqueName,
-                                           @RequestParam String userFirstName,
-                                           @RequestParam String userLastName){
-
-        // @ResponseBody means the returned String is the response, not a view name
-        // @RequestParam means it is a parameter from the GET or POST request
-
-        User user = new User();
-        user.setUserFirstName(userFirstName);
-        user.setUserLastName(userLastName);
-        user.setUserUniqueName(userUniqueName);
-        try{
-
-            userRepository.save(user);
-            return "Saved";
-
-        }catch (Exception e){
-            return ("Failed, because of "+e);
-        }
-
-
-}
 
     @PostMapping("/addUser")
     public @ResponseBody String addUser(@RequestBody User user){
@@ -52,7 +27,7 @@ public class UserController {
         }
     }
 
-    @PostMapping(path="/all")
+    @GetMapping(path="/all")
     public @ResponseBody Iterable<User> getAllUsers() {
         // This returns a JSON or XML with the users
         return userRepository.findAll();
@@ -95,5 +70,23 @@ public class UserController {
             return ("Failed, because of "+e);
         }
 
+    }
+
+    @GetMapping("/getUser/{userId}")
+    public @ResponseBody
+    Object getUser(@PathVariable Integer userId){
+        try{
+
+            User user = userRepository.findById(userId).get();
+
+            if(user.getUserUniqueName() == null){
+                return "No user with that Id";
+            }
+
+            return user;
+        }catch (Exception e){
+
+            return ("Failed, because of "+e);
+        }
     }
 }
